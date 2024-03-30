@@ -167,6 +167,35 @@ vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagn
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagnostic [E]rror messages' })
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
+-- Nvim-tree keymaps
+vim.keymap.set('n', '<C-n>', function()
+  vim.cmd 'NvimTreeToggle'
+end, { desc = 'Open Nvim-tree' })
+
+-- Tab keymaps
+vim.keymap.set('n', '<leader>ty', function()
+  vim.cmd 'tabnew .'
+end, { desc = '[T]ab [Y](new)' })
+
+--[[
+vim.keymap.set('n', '<leader>ty', function()
+  local entering_cmd = vim.fn.getcmdpos() == 1 and vim.fn.getcmdtype() == ":"
+  return entering_cmd and expansion or abbreviation
+end, { desc = '[T]ab [Y](new)' })
+--]]
+
+vim.keymap.set('n', '<leader>tn', function()
+  vim.cmd 'tabnext'
+end, { desc = '[T]ab [N]ext' })
+
+vim.keymap.set('n', '<leader>tp', function()
+  vim.cmd 'tabprevious'
+end, { desc = '[T]ab [P]revious' })
+
+vim.keymap.set('n', '<leader>tx', function()
+  vim.cmd 'tabclose'
+end, { desc = '[T]ab [X](close)' })
+
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
 -- is not what someone will guess without a bit more experience.
@@ -240,6 +269,19 @@ require('lazy').setup({
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
+  --nerd tree
+  {
+    'nvim-tree/nvim-tree.lua',
+    version = '*',
+    lazy = false,
+    dependencies = {
+      'nvim-tree/nvim-web-devicons',
+    },
+    config = function()
+      require('nvim-tree').setup {}
+    end,
+  },
+
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
   --    require('gitsigns').setup({ ... })
@@ -286,6 +328,7 @@ require('lazy').setup({
         ['<leader>r'] = { name = '[R]ename', _ = 'which_key_ignore' },
         ['<leader>s'] = { name = '[S]earch', _ = 'which_key_ignore' },
         ['<leader>w'] = { name = '[W]orkspace', _ = 'which_key_ignore' },
+        ['<leader>t'] = { name = '[T]abs', _ = 'which_key_ignore' },
       }
     end,
   },
@@ -538,10 +581,10 @@ require('lazy').setup({
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
       local servers = {
-        -- clangd = {},
+        clangd = {},
         -- gopls = {},
-        -- pyright = {},
-        -- rust_analyzer = {},
+        pyright = {},
+        rust_analyzer = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -734,13 +777,13 @@ require('lazy').setup({
     -- change the command in the config to whatever the name of that colorscheme is.
     --
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'folke/tokyonight.nvim',
+    'EdenEast/nightfox.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
       -- Load the colorscheme here.
       -- Like many other themes, this one has different styles, and you could load
       -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'tokyonight-night'
+      vim.cmd.colorscheme 'nightfox'
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
