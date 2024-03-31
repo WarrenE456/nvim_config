@@ -176,9 +176,9 @@ vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, { desc = 'Show diagn
 vim.keymap.set('n', '<leader>q', vim.diagnostic.setloclist, { desc = 'Open diagnostic [Q]uickfix list' })
 
 -- Nvim-tree keymaps
-vim.keymap.set('n', '<C-n>', function()
-  vim.cmd 'NvimTreeToggle'
-end, { desc = 'Open Nvim-tree' })
+-- vim.keymap.set('n', '<C-n>', function()
+--   vim.cmd 'NvimTreeToggle'
+-- end, { desc = 'Open Nvim-tree' })
 
 -- Tab keymaps
 vim.keymap.set('n', '<leader>ty', function()
@@ -278,21 +278,21 @@ require('lazy').setup({
   { 'numToStr/Comment.nvim', opts = {} },
 
   --  Nvim-tree
-  {
-    'nvim-tree/nvim-tree.lua',
-    version = '*',
-    lazy = false,
-    dependencies = {
-      'nvim-tree/nvim-web-devicons',
-    },
-    config = function()
-      require('nvim-tree').setup {
-        git = {
-          enable = false,
-        },
-      }
-    end,
-  },
+  -- {
+  --   'nvim-tree/nvim-tree.lua',
+  --   version = '*',
+  --   lazy = false,
+  --   dependencies = {
+  --     'nvim-tree/nvim-web-devicons',
+  --   },
+  --   config = function()
+  --     require('nvim-tree').setup {
+  --       git = {
+  --         enable = false,
+  --       },
+  --     }
+  --   end,
+  -- },
 
   { 'ThePrimeagen/vim-be-good' },
 
