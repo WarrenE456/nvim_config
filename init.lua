@@ -169,6 +169,28 @@ vim.keymap.set('n', 'W', 'b')
 vim.keymap.set('n', '<C-d', '<C-d>zz')
 vim.keymap.set('n', '<C-u', '<C-u>zz')
 
+-- Build and run commands
+vim.api.nvim_create_autocmd('FileType', {
+  pattern = { 'cpp' },
+  callback = function()
+    vim.schedule(function()
+      require('which-key').register {
+        ['<leader>b'] = { name = '[B]ash', _ = 'which_key_ignore' },
+      }
+
+      vim.keymap.set('n', '<leader>bc', function()
+        vim.cmd '!./config.sh'
+      end, { desc = '[B]ash [C]onfig' })
+      vim.keymap.set('n', '<leader>bb', function()
+        vim.cmd '!./build.sh'
+      end, { desc = '[B]ash [B]uild)' })
+      vim.keymap.set('n', '<leader>br', function()
+        vim.cmd '!./run.sh'
+      end, { desc = '[B]ash [R]un)' })
+    end)
+  end,
+})
+
 -- Diagnostic keymaps
 vim.keymap.set('n', '[d', vim.diagnostic.goto_prev, { desc = 'Go to previous [D]iagnostic message' })
 vim.keymap.set('n', ']d', vim.diagnostic.goto_next, { desc = 'Go to next [D]iagnostic message' })
