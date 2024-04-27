@@ -143,8 +143,8 @@ vim.opt.splitbelow = true
 -- Sets how neovim will display certain whitespace characters in the editor.
 --  See `:help 'list'`
 --  and `:help 'listchars'`
-vim.opt.list = true
-vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
+-- vim.opt.list = true
+-- vim.opt.listchars = { tab = '» ', trail = '·', nbsp = '␣' }
 
 -- Preview substitutions live, as you type!
 vim.opt.inccommand = 'split'
@@ -162,12 +162,23 @@ vim.opt.scrolloff = 10
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- Save all buffers when toggling to terminal
+vim.keymap.set('n', '<C-z>', ':w\n<C-z>')
+
 -- Set W to go backwards a word
 vim.keymap.set('n', 'W', 'b')
+vim.keymap.set('v', 'W', 'b')
 
 -- Change commands to center screen also
 vim.keymap.set('n', '<C-d', '<C-d>zz')
-vim.keymap.set('n', '<C-u', '<C-u>zz')
+vim.keymap.set('n', '<C-u', '<C-d>zz')
+
+vim.keymap.set('n', '<C-j>', '10j')
+vim.keymap.set('n', '<C-k>', '10k')
+
+-- set tabstop and shiftwidth to 4
+vim.cmd 'set tabstop=4'
+vim.cmd 'set shiftwidth=4'
 
 -- Build and run commands
 vim.api.nvim_create_autocmd('FileType', {
@@ -188,6 +199,14 @@ vim.api.nvim_create_autocmd('FileType', {
         vim.cmd '!./run.sh'
       end, { desc = '[B]ash [R]un)' })
     end)
+  end,
+})
+
+-- Enable spell checker on text and markdown files
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+  pattern = { '*.txt', '*.md' },
+  callback = function()
+    vim.cmd 'setlocal spell spelllang=en_us'
   end,
 })
 
@@ -621,6 +640,7 @@ require('lazy').setup({
         -- gopls = {},
         pyright = {},
         rust_analyzer = {},
+        cmake = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
         --
         -- Some languages (like typescript) have entire language plugins that can be useful:
@@ -823,6 +843,8 @@ require('lazy').setup({
 
       -- You can configure highlights by doing something like:
       vim.cmd.hi 'Comment gui=none'
+
+      vim.cmd 'hi Normal guibg=NONE ctermbg=NONE'
     end,
   },
 
@@ -868,7 +890,7 @@ require('lazy').setup({
     'nvim-treesitter/nvim-treesitter',
     build = ':TSUpdate',
     opts = {
-      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'rust', 'python' },
+      ensure_installed = { 'bash', 'c', 'html', 'lua', 'luadoc', 'markdown', 'vim', 'vimdoc', 'rust', 'python', 'glsl' },
       -- Autoinstall languages that are not installed
       auto_install = true,
       highlight = {
