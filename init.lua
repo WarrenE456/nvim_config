@@ -169,6 +169,9 @@ vim.keymap.set('n', '<C-z>', ':w\n<C-z>')
 vim.keymap.set('n', 'W', 'b')
 vim.keymap.set('v', 'W', 'b')
 
+-- Open minmap
+vim.keymap.set('n', '<M-m>', ':Minimap<Enter><C-l>')
+
 -- Make full set of curly braces
 -- vim.keymap.set('i', '{', '{<Esc>o}<Esc>O')
 
@@ -211,14 +214,6 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
   pattern = '*',
   callback = function()
     vim.cmd 'setlocal spell spelllang=en_us'
-  end,
-})
-
--- Run minimap each new buffer
-vim.api.nvim_create_autocmd('BufEnter', {
-  pattern = '*',
-  callback = function()
-    vim.cmd 'Minimap'
   end,
 })
 
