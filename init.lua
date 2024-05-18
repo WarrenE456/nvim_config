@@ -169,18 +169,22 @@ vim.keymap.set('n', '<C-z>', ':w\n<C-z>')
 vim.keymap.set('n', 'W', 'b')
 vim.keymap.set('v', 'W', 'b')
 
--- Change commands to center screen also
-vim.keymap.set('n', '<C-d', '<C-d>zz')
-vim.keymap.set('n', '<C-u', '<C-d>zz')
+-- Make full set of curly braces
+-- vim.keymap.set('i', '{', '{<Esc>o}<Esc>O')
 
-vim.keymap.set('n', '<C-j>', '10j')
-vim.keymap.set('n', '<C-k>', '10k')
+-- Scroll up and down by 3 lines
+vim.keymap.set('n', '<C-u>', '3<C-y>3k')
+vim.keymap.set('n', '<C-d>', '3<C-e>3j')
 
--- set tabstop and shiftwidth to 4
-vim.cmd 'set tabstop=4'
-vim.cmd 'set shiftwidth=4'
+-- set tab to 2 spaces
+vim.opt.smarttab = true
+vim.opt.expandtab = true
+vim.opt.shiftwidth = 4
+-- vim.cmd ':set shiftwidth=2 smarttab'
+-- vim.cmd ':set expandtab'
+-- vim.cmd ':set set tabstop=8 softtabstop=0'
 
--- Build and run commands
+-- Build and run commands with bash C/CPP
 vim.api.nvim_create_autocmd('FileType', {
   pattern = { 'cpp' },
   callback = function()
@@ -202,11 +206,19 @@ vim.api.nvim_create_autocmd('FileType', {
   end,
 })
 
--- Enable spell checker on text and markdown files
+-- Enable spell checker
 vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-  pattern = { '*.txt', '*.md' },
+  pattern = '*',
   callback = function()
     vim.cmd 'setlocal spell spelllang=en_us'
+  end,
+})
+
+-- Run minimap each new buffer
+vim.api.nvim_create_autocmd('BufEnter', {
+  pattern = '*',
+  callback = function()
+    vim.cmd 'Minimap'
   end,
 })
 
@@ -237,13 +249,23 @@ vim.keymap.set('n', '<leader>tn', function()
   vim.cmd 'tabnext'
 end, { desc = '[T]ab [N]ext' })
 
+vim.keymap.set('n', '<M-l>', function()
+  vim.cmd 'tabnext'
+end, { desc = 'Go to next tab' })
+
 vim.keymap.set('n', '<leader>tp', function()
-  vim.cmd 'tabprevious'
+  vim.cmd 'tabprevious-0'
 end, { desc = '[T]ab [P]revious' })
+
+vim.keymap.set('n', '<M-h>', function()
+  vim.cmd 'tabprevious'
+end, { desc = 'Go to previous tab' })
 
 vim.keymap.set('n', '<leader>tx', function()
   vim.cmd 'tabclose'
 end, { desc = '[T]ab [X](close)' })
+
+vim.keymap.set('n', 'cw', 'viwc')
 
 -- Exit terminal mode in the builtin terminal with a shortcut that is a bit easier
 -- for people to discover. Otherwise, you normally need to press <C-\><C-n>, which
@@ -265,8 +287,8 @@ vim.keymap.set('t', '<Esc><Esc>', '<C-\\><C-n>', { desc = 'Exit terminal mode' }
 --  See `:help wincmd` for a list of all window commands
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', { desc = 'Move focus to the left window' })
 vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right window' })
-vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
-vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
+vim.keymap.set('n', '<C-J>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
+vim.keymap.set('n', '<C-K>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
 -- [[ Basic Autocommands ]]
 --  See `:help lua-guide-autocommands`
@@ -304,7 +326,7 @@ vim.opt.rtp:prepend(lazypath)
 -- NOTE: Here is where you install your plugins.
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
-  'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
+  -- 'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
 
   -- NOTE: Plugins can also be added by using a table,
   -- with the first argument being the link and the following
@@ -318,24 +340,60 @@ require('lazy').setup({
   -- "gc" to comment visual regions/lines
   { 'numToStr/Comment.nvim', opts = {} },
 
-  --  Nvim-tree
-  -- {
-  --   'nvim-tree/nvim-tree.lua',
-  --   version = '*',
-  --   lazy = false,
-  --   dependencies = {
-  --     'nvim-tree/nvim-web-devicons',
-  --   },
-  --   config = function()
-  --     require('nvim-tree').setup {
-  --       git = {
-  --         enable = false,
-  --       },
-  --     }
-  --   end,
-  -- },
-
   { 'ThePrimeagen/vim-be-good' },
+
+  -- debugging
+  {
+    'mfussenegger/nvim-dap',
+    dependencies = {
+      'rcarriga/nvim-dap-ui',
+      'nvim-neotest/nvim-nio',
+    },
+    config = function()
+      local dap = require 'dap'
+      local dapui = require 'dapui'
+
+      vim.keymap.set('n', '<leader>bt', dap.toggle_breakpoint, { desc = '[D]ap [T]oggle breakpoint' })
+      vim.keymap.set('n', '<leader>bc', dap.continue, { desc = '[D]ap [C]ontinue' })
+
+      dap.listeners.before.attach.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.launch.dapui_config = function()
+        dapui.open()
+      end
+      dap.listeners.before.event_terminated.dapui_config = function()
+        dapui.close()
+      end
+      dap.listeners.before.event_exited.dapui_config = function()
+        dapui.close()
+      end
+
+      dap.configurations.c = {
+        {
+          name = 'Launch',
+          type = 'gdb',
+          request = 'launch',
+          program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          stopAtBeginningOfMainSubprogram = false,
+        },
+      }
+    end,
+  },
+
+  -- Blazingly fast minimap
+  {
+    'wfxr/minimap.vim',
+    config = function()
+      vim.g.minimap_auto_start = true
+      vim.g.minimap_left = true
+      vim.g.minimap_highlight_search = true
+      vim.g.minimap_width = 15
+    end,
+  },
 
   -- Here is a more advanced example where we pass configuration
   -- options to `gitsigns.nvim`. This is equivalent to the following Lua:
@@ -713,6 +771,9 @@ require('lazy').setup({
       end,
       formatters_by_ft = {
         lua = { 'stylua' },
+        c = { 'clang-format' },
+        cpp = { 'clang-format' },
+
         -- Conform can also run multiple formatters sequentially
         -- python = { "isort", "black" },
         --
@@ -828,23 +889,33 @@ require('lazy').setup({
     end,
   },
 
+  -- Undo tree
+  { 'mbbill/undotree' },
+
+  -- { 'EdenEast/nightfox.nvim' },
   { -- You can easily change to a different colorscheme.
     -- Change the name of the colorscheme plugin below, and then
     -- change the command in the config to whatever the name of that colorscheme is.
-    --
+    'rebelot/kanagawa.nvim',
     -- If you want to see what colorschemes are already installed, you can use `:Telescope colorscheme`.
-    'EdenEast/nightfox.nvim',
     priority = 1000, -- Make sure to load this before all the other start plugins.
     init = function()
-      -- Load the colorscheme here.
-      -- Like many other themes, this one has different styles, and you could load
-      -- any other, such as 'tokyonight-storm', 'tokyonight-moon', or 'tokyonight-day'.
-      vim.cmd.colorscheme 'nightfox'
+      require('kanagawa').setup {
+        commentStyle = { italic = false },
+        functionStyle = {},
+        keywordStyle = { italic = false },
+        statementStyle = { bold = true },
+        typeStyle = {},
+        transparent = true,
+      }
+      print 'test2'
+      vim.cmd 'colorscheme kanagawa'
 
       -- You can configure highlights by doing something like:
-      vim.cmd.hi 'Comment gui=none'
-
-      vim.cmd 'hi Normal guibg=NONE ctermbg=NONE'
+      -- Transparent
+      -- vim.cmd.hi 'Comment gui=none'
+      --
+      -- vim.cmd 'hi Normal guibg=NONE ctermbg=NONE'
     end,
   },
 
