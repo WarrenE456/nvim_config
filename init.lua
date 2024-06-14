@@ -72,7 +72,7 @@ Kickstart Guide:
 
    NOTE: Look for lines like this
 
-    Throughout the file. These are for you, the reader, to help you understand what is happening.
+    Throughout the file. These are for you, the reader, to help you under happening.
     Feel free to delete them once you know what you're doing, but they should serve as a guide
     for when you are first encountering a few different constructs in your Neovim config.
 
@@ -155,6 +155,18 @@ vim.opt.cursorline = true
 -- Minimal number of screen lines to keep above and below the cursor.
 vim.opt.scrolloff = 10
 
+-- Remove tildes at the side.
+vim.opt.fillchars = { eob = ' ' }
+
+-- Remove status bar
+vim.opt.laststatus = 0
+vim.opt.showmode = false
+vim.opt.ruler = false
+vim.opt.showcmd = false
+
+-- Line padding
+vim.opt.nuw = 5
+
 -- [[ Basic Keymaps ]]
 --  See `:help vim.keymap.set()`
 
@@ -214,6 +226,14 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
   pattern = '*',
   callback = function()
     vim.cmd 'setlocal spell spelllang=en_us'
+  end,
+})
+
+-- Remove the god awful, annoying start screen
+vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
+  pattern = '*',
+  callback = function()
+    vim.cmd 'call feedkeys("\\<Esc>")'
   end,
 })
 
@@ -319,6 +339,9 @@ vim.opt.rtp:prepend(lazypath)
 --    :Lazy update
 --
 -- NOTE: Here is where you install your plugins.
+
+-- debug
+
 require('lazy').setup({
   -- NOTE: Plugins can be added with a link (or for a github repo: 'owner/repo' link).
   -- 'tpope/vim-sleuth', -- Detect tabstop and shiftwidth automatically
@@ -337,32 +360,94 @@ require('lazy').setup({
 
   { 'ThePrimeagen/vim-be-good' },
 
+  {
+    'jbyuki/monolithic.nvim',
+    config = function()
+      vim.keymap.set('n', 'm', function()
+        vim.cmd 'lua require '
+        monolithic '.open()'
+      end)
+    end,
+  },
+
   -- debugging
   {
+    -- NOTE: Yes, you can install new plugins here!
     'mfussenegger/nvim-dap',
+    -- NOTE: And you can specify dependencies as well
     dependencies = {
+      -- Creates a beautiful debugger UI
       'rcarriga/nvim-dap-ui',
+
+      -- Required dependency for nvim-dap-ui
       'nvim-neotest/nvim-nio',
+
+      -- Installs the debug adapters for you
+      'williamboman/mason.nvim',
+      'jay-babu/mason-nvim-dap.nvim',
+
+      -- Add your own debuggers here
+      'leoluz/nvim-dap-go',
     },
     config = function()
       local dap = require 'dap'
       local dapui = require 'dapui'
 
-      vim.keymap.set('n', '<leader>bt', dap.toggle_breakpoint, { desc = '[D]ap [T]oggle breakpoint' })
-      vim.keymap.set('n', '<leader>bc', dap.continue, { desc = '[D]ap [C]ontinue' })
+      require('mason-nvim-dap').setup {
+        -- Makes a best effort to setup the various debuggers with
+        -- reasonable debug configurations
+        automatic_setup = true,
 
-      dap.listeners.before.attach.dapui_config = function()
-        dapui.open()
-      end
-      dap.listeners.before.launch.dapui_config = function()
-        dapui.open()
-      end
-      dap.listeners.before.event_terminated.dapui_config = function()
-        dapui.close()
-      end
-      dap.listeners.before.event_exited.dapui_config = function()
-        dapui.close()
-      end
+        -- You can provide additional configuration to the handlers,
+        -- see mason-nvim-dap README for more information
+        handlers = {},
+
+        -- You'll need to check that you have the required things installed
+        -- online, please don't ask me how to install them :)
+        ensure_installed = {
+          -- Update this to ensure that you have the debuggers for the langs you want
+          'cpp',
+          'c',
+        },
+      }
+
+      -- Basic debugging keymaps, feel free to change to your liking!
+      vim.keymap.set('n', '<F5>', dap.continue, { desc = 'Debug: Start/Continue' })
+      vim.keymap.set('n', '<F1>', dap.step_into, { desc = 'Debug: Step Into' })
+      vim.keymap.set('n', '<F2>', dap.step_over, { desc = 'Debug: Step Over' })
+      vim.keymap.set('n', '<F3>', dap.step_out, { desc = 'Debug: Step Out' })
+      vim.keymap.set('n', '<leader>b', dap.toggle_breakpoint, { desc = 'Debug: Toggle Breakpoint' })
+      vim.keymap.set('n', '<leader>B', function()
+        dap.set_breakpoint(vim.fn.input 'Breakpoint condition: ')
+      end, { desc = 'Debug: Set Breakpoint' })
+
+      -- Dap UI setup
+      -- For more information, see |:help nvim-dap-ui|
+      dapui.setup {
+        -- Set icons to characters that are more likely to work in every terminal.
+        --    Feel free to remove or use ones that you like more! :)
+        --    Don't feel like these are good choices.
+        icons = { expanded = '▾', collapsed = '▸', current_frame = '*' },
+        controls = {
+          icons = {
+            pause = '⏸',
+            play = '▶',
+            step_into = '⏎',
+            step_over = '⏭',
+            step_out = '⏮',
+            step_back = 'b',
+            run_last = '▶▶',
+            terminate = '⏹',
+            disconnect = '⏏',
+          },
+        },
+      }
+
+      dap.adapters.gdb = {
+        type = 'executable',
+        command = 'gdb',
+        name = 'gdb',
+      }
 
       dap.configurations.c = {
         {
@@ -376,9 +461,91 @@ require('lazy').setup({
           stopAtBeginningOfMainSubprogram = false,
         },
       }
+      dap.adapters.cpp = {
+        type = 'executable',
+        attach = {
+          pidProperty = 'pid',
+          pidSelect = 'ask',
+        },
+        command = 'lldb', -- my binary was called 'lldb-vscode-11'
+        env = {
+          LLDB_LAUNCH_FLAG_LAUNCH_IN_TTY = 'YES',
+        },
+        name = 'lldb',
+      }
+
+      dap.configurations.cpp = {
+        {
+          name = 'lldb',
+          type = 'cpp',
+          request = 'launch',
+          program = function()
+            return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+          end,
+          cwd = '${workspaceFolder}',
+          externalTerminal = false,
+          stopOnEntry = false,
+          args = {},
+        },
+      }
+
+      -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
+      vim.keymap.set('n', '<F7>', dapui.toggle, { desc = 'Debug: See last session result.' })
+
+      dap.listeners.after.event_initialized['dapui_config'] = dapui.open
+      dap.listeners.before.event_terminated['dapui_config'] = dapui.close
+      dap.listeners.before.event_exited['dapui_config'] = dapui.close
+
+      -- Install golang specific config
+      require('dap-go').setup()
     end,
   },
-
+  -- {
+  --   'mfussenegger/nvim-dap',
+  --   dependencies = {
+  --     'rcarriga/nvim-dap-ui',
+  --     'nvim-neotest/nvim-nio',
+  --   },
+  --   config = function()
+  --     local dap = require 'dap'
+  --     local dapui = require 'dapui'
+  --
+  --     vim.keymap.set('n', '<leader>bt', dap.toggle_breakpoint, { desc = '[D]ap [T]oggle breakpoint' })
+  --     vim.keymap.set('n', '<leader>bc', dap.continue, { desc = '[D]ap [C]ontinue' })
+  --
+  --     dap.listeners.before.attach.dapui_config = function()
+  --       dapui.open()
+  --     end
+  --     dap.listeners.before.launch.dapui_config = function()
+  --       dapui.open()
+  --     end
+  --     dap.listeners.before.event_terminated.dapui_config = function()
+  --       dapui.close()
+  --     end
+  --     dap.listeners.before.event_exited.dapui_config = function()
+  --       dapui.close()
+  --     end
+  --
+  --     dap.configurations.c = {
+  --       {
+  --         name = 'Launch',
+  --         type = 'gdb',
+  --         request = 'launch',
+  --         program = function()
+  --           return vim.fn.input('Path to executable: ', vim.fn.getcwd() .. '/', 'file')
+  --         end,
+  --         cwd = '${workspaceFolder}',
+  --         stopAtBeginningOfMainSubprogram = false,
+  --       },
+  --     }
+  --
+  --     dap.configurations.c = {
+  --       type = 'gdb',
+  --       command = 'gdb',
+  --       name = 'gdb',
+  --     }
+  --   end,
+  -- },
   -- Blazingly fast minimap
   {
     'wfxr/minimap.vim',
@@ -688,10 +855,14 @@ require('lazy').setup({
       --  - capabilities (table): Override fields in capabilities. Can be used to disable certain LSP features.
       --  - settings (table): Override the default settings passed when initializing the server.
       --        For example, to see the options for `lua_ls`, you could go to: https://luals.github.io/wiki/settings/
+      --
+      require('lspconfig').zls.setup {}
+
       local servers = {
-        clangd = {},
+        clangd = { clangd_config = { init_options = { compilationDatabasePath = './out' } } },
         -- gopls = {},
-        pyright = {},
+        pylsp = {},
+
         rust_analyzer = {},
         cmake = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -903,8 +1074,13 @@ require('lazy').setup({
         typeStyle = {},
         transparent = true,
       }
-      print 'test2'
-      vim.cmd 'colorscheme kanagawa'
+
+      -- change colorss
+      -- make left bar transparent
+      vim.cmd 'colorscheme kanagawa-dragon'
+      vim.cmd 'hi LineNr guibg=NONE'
+      vim.cmd 'hi CursorLineNr guibg=NONE'
+      vim.cmd 'hi SignColumn guibg=NONE'
 
       -- You can configure highlights by doing something like:
       -- Transparent
@@ -937,14 +1113,19 @@ require('lazy').setup({
       -- Simple and easy statusline.
       --  You could remove this setup call if you don't like it,
       --  and try some other statusline plugin
-      local statusline = require 'mini.statusline'
+      -- local statusline = require 'mini.statusline'
+      local statusline = nil
       -- set use_icons to true if you have a Nerd Font
-      statusline.setup { use_icons = vim.g.have_nerd_font } -- You can configure sections in the statusline by overriding their
+      if statusline then
+        statusline.setup { use_icons = vim.g.have_nerd_font } -- You can configure sections in the statusline by overriding their
+      end
       -- default behavior. For example, here we set the section for
       -- cursor location to LINE:COLUMN
       ---@diagnostic disable-next-line: duplicate-set-field
-      statusline.section_location = function()
-        return '%2l:%-2v'
+      if statusline then
+        statusline.section_location = function()
+          return '%2l:%-2v'
+        end
       end
 
       -- ... and there is more!

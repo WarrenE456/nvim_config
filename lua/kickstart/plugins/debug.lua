@@ -28,6 +28,8 @@ return {
     local dap = require 'dap'
     local dapui = require 'dapui'
 
+    print 'hello there'
+
     require('mason-nvim-dap').setup {
       -- Makes a best effort to setup the various debuggers with
       -- reasonable debug configurations
@@ -42,6 +44,7 @@ return {
       ensure_installed = {
         -- Update this to ensure that you have the debuggers for the langs you want
         'delve',
+        'cpp',
       },
     }
 
@@ -75,6 +78,12 @@ return {
           disconnect = '⏏',
         },
       },
+    }
+
+    dap.adapters.gdb = {
+      type = 'executable',
+      command = 'gdb',
+      name = 'gdb',
     }
 
     -- Toggle to see last session result. Without this, you can't see session output in case of unhandled exception.
