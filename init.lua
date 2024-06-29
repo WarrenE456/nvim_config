@@ -158,7 +158,7 @@ vim.opt.scrolloff = 10
 -- Remove tildes at the side.
 vim.opt.fillchars = { eob = ' ' }
 
--- Remove status bar
+-- Remove statusline
 vim.opt.laststatus = 0
 vim.opt.showmode = false
 vim.opt.ruler = false
@@ -226,14 +226,6 @@ vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
   pattern = '*',
   callback = function()
     vim.cmd 'setlocal spell spelllang=en_us'
-  end,
-})
-
--- Remove the god awful, annoying start screen
-vim.api.nvim_create_autocmd({ 'BufEnter', 'BufWinEnter' }, {
-  pattern = '*',
-  callback = function()
-    vim.cmd 'call feedkeys("\\<Esc>")'
   end,
 })
 
@@ -368,6 +360,25 @@ require('lazy').setup({
         monolithic '.open()'
       end)
     end,
+  },
+
+  {
+    "kawre/leetcode.nvim",
+    build = ":TSUpdate html",
+    dependencies = {
+      "nvim-telescope/telescope.nvim",
+      "nvim-lua/plenary.nvim", -- required by telescope
+      "MunifTanjim/nui.nvim",
+
+      -- optional
+      "nvim-treesitter/nvim-treesitter",
+      "rcarriga/nvim-notify",
+      "nvim-tree/nvim-web-devicons",
+    },
+    opts = {
+      arg = "leetcode.nvim",
+      lang = "cpp",
+    },
   },
 
   -- debugging
@@ -859,10 +870,12 @@ require('lazy').setup({
       require('lspconfig').zls.setup {}
 
       local servers = {
-        clangd = { clangd_config = { init_options = { compilationDatabasePath = './out' } } },
+        clangd = { 
+          clangd_config = { init_options = { compilationDatabasePath = './out' } },
+          file_types = {"c", "cpp", "cuda"}
+        },
         -- gopls = {},
         pylsp = {},
-
         rust_analyzer = {},
         cmake = {},
         -- ... etc. See `:help lspconfig-all` for a list of all the pre-configured LSPs
@@ -921,34 +934,34 @@ require('lazy').setup({
     end,
   },
 
-  { -- Autoformat
-    'stevearc/conform.nvim',
-    opts = {
-      notify_on_error = false,
-      format_on_save = function(bufnr)
-        -- Disable "format_on_save lsp_fallback" for languages that don't
-        -- have a well standardized coding style. You can add additional
-        -- languages here or re-enable it for the disabled ones.
-        local disable_filetypes = { c = true, cpp = true }
-        return {
-          timeout_ms = 500,
-          lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
-        }
-      end,
-      formatters_by_ft = {
-        lua = { 'stylua' },
-        c = { 'clang-format' },
-        cpp = { 'clang-format' },
-
-        -- Conform can also run multiple formatters sequentially
-        -- python = { "isort", "black" },
-        --
-        -- You can use a sub-list to tell conform to run *until* a formatter
-        -- is found.
-        -- javascript = { { "prettierd", "prettier" } },
-      },
-    },
-  },
+  -- { -- Autoformat
+  --   'stevearc/conform.nvim',
+  --   opts = {
+  --     notify_on_error = false,
+  --     format_on_save = function(bufnr)
+  --       -- Disable "format_on_save lsp_fallback" for languages that don't
+  --       -- have a well standardized coding style. You can add additional
+  --       -- languages here or re-enable it for the disabled ones.
+  --       local disable_filetypes = { c = true, cpp = true }
+  --       return {
+  --         timeout_ms = 500,
+  --         lsp_fallback = not disable_filetypes[vim.bo[bufnr].filetype],
+  --       }
+  --     end,
+  --     formatters_by_ft = {
+  --       lua = { 'stylua' },
+  --       c = { 'clang-format' },
+  --       cpp = { 'clang-format' },
+  --
+  --       -- Conform can also run multiple formatters sequentially
+  --       -- python = { "isort", "black" },
+  --       --
+  --       -- You can use a sub-list to tell conform to run *until* a formatter
+  --       -- is found.
+  --       -- javascript = { { "prettierd", "prettier" } },
+  --     },
+  --   },
+  -- },
 
   { -- Autocompletion
     'hrsh7th/nvim-cmp',
