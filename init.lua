@@ -35,6 +35,14 @@ require("lazy").setup({
             {"hrsh7th/cmp-nvim-lsp"},
             {"L3MON4D3/LuaSnip"},
         },
+        { -- Status line
+            'nvim-lualine/lualine.nvim',
+            dependencies = { 'nvim-tree/nvim-web-devicons' }
+        },
+        {
+            'goolord/alpha-nvim',
+            dependencies = { 'nvim-tree/nvim-web-devicons' },
+        },
         -- Color scheme
         {"rebelot/kanagawa.nvim"},
 
@@ -107,13 +115,19 @@ require("nvim-treesitter.configs").setup {
     ensure_installed = { "c", "cpp", "rust", "python", "lua", "vim", "vimdoc", "query" },
 }
 
--- Autocommands
-vim.api.nvim_create_autocmd("VimEnter", {
-    command = "set nornu nonu | Neotree toggle",
-})
-vim.api.nvim_create_autocmd("BufEnter", {
-    command = "set rnu nu",
-})
+-- Lua line / status line setup
+require("lualine").setup {}
+
+-- Neotree file tree setup
+require("neo-tree").setup {
+    close_if_last_window = true,
+    window = {
+        width=25,
+    },
+}
+
+-- Alpha.nvim start up screen setup
+require'alpha'.setup(require'alpha.themes.dashboard'.config)
 
 -- Key binds
 vim.keymap.set('n', 'W', 'b', {})
@@ -135,7 +149,10 @@ vim.keymap.set('n', '<leader>/', function()
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown { winblend = 10, previewer = false, })
     end, {})
 
--- Vim options
+-- Neotree keybinds
+vim.keymap.set('n', '<leader>nt', function() vim.cmd("Neotree float") end, {})
+
+
 -- Highlight on yank
 vim.api.nvim_create_autocmd('TextYankPost', {
     desc = 'Highlight when yanking (copying) text',
@@ -145,32 +162,37 @@ vim.api.nvim_create_autocmd('TextYankPost', {
     end,
 })
 
+-- Vim options
+
 -- Set color scheme
 vim.cmd.colorscheme("kanagawa-dragon")
 
 -- Make everything transparent
 vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
 vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormaCursorLineNr", { bg = "none" })
-vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormaCursorLineNr", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
 
 -- Add line numbers
 vim.cmd("set number")
 vim.cmd("set rnu")
 
--- Remove noise
-vim.cmd("let s:hidden_all = 1")
-vim.cmd("set noshowmode")
-vim.cmd("set noruler")
-vim.cmd("set laststatus=0")
-vim.cmd("set noshowcmd")
+-- Remove status line
+-- vim.cmd("let s:hidden_all = 1")
+-- vim.cmd("set noshowmode")
+-- vim.cmd("set noruler")
+-- vim.cmd("set laststatus=0")
+-- vim.cmd("set noshowcmd")
+
+-- Make status line full width
+vim.cmd("set laststatus=3")
 
 -- Set tabs
-vim.cmd("set tabstop=4");
-vim.cmd("set shiftwidth=4");
+vim.cmd("set tabstop=4")
+vim.cmd("set shiftwidth=4")
 vim.cmd("set smarttab")
-vim.cmd("set expandtab");
+vim.cmd("set expandtab")
 
 -- Remove tildas
 vim.opt.fillchars = {eob = " "}
