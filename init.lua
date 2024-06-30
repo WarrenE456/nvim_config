@@ -18,17 +18,23 @@ require("lazy").setup({
             {"williamboman/mason-lspconfig.nvim"},
             {"neovim/nvim-lspconfig"},
         },
-        {
+        { -- Telescope
             'nvim-telescope/telescope.nvim', tag = '0.1.8',
                 dependencies = { 'nvim-lua/plenary.nvim' }
         },
-
+        { -- File tree
+            "nvim-neo-tree/neo-tree.nvim",
+            branch = "v3.x",
+            dependencies = {
+              "nvim-lua/plenary.nvim",
+              "MunifTanjim/nui.nvim",
+            }
+        },
         { -- Completion and snippets
             {"hrsh7th/nvim-cmp"},
             {"hrsh7th/cmp-nvim-lsp"},
             {"L3MON4D3/LuaSnip"},
         },
-
         -- Color scheme
         {"rebelot/kanagawa.nvim"},
 
@@ -101,8 +107,22 @@ require("nvim-treesitter.configs").setup {
     ensure_installed = { "c", "cpp", "rust", "python", "lua", "vim", "vimdoc", "query" },
 }
 
+-- Autocommands
+vim.api.nvim_create_autocmd("VimEnter", {
+    command = "set nornu nonu | Neotree toggle",
+})
+vim.api.nvim_create_autocmd("BufEnter", {
+    command = "set rnu nu",
+})
+
 -- Key binds
 vim.keymap.set('n', 'W', 'b', {})
+
+-- Navigate windows
+vim.keymap.set('n', '<C-h>', '<C-w><C-h>', {})
+vim.keymap.set('n', '<C-l>', '<C-w><C-l>', {})
+vim.keymap.set('n', '<C-J>', '<C-w><C-j>', {})
+vim.keymap.set('n', '<C-K>', '<C-w><C-k>', {})
 
 -- Telescope key binds
 local builtin = require('telescope.builtin')
