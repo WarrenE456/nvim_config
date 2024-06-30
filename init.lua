@@ -1,4 +1,4 @@
--- Bootstrap lazy.nvim
+-- Bootstrap lazy.nvimjjjkj
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
@@ -20,7 +20,7 @@ require("lazy").setup({
         },
         { -- Telescope
             'nvim-telescope/telescope.nvim', tag = '0.1.8',
-                dependencies = { 'nvim-lua/plenary.nvim' }
+            dependencies = { 'nvim-lua/plenary.nvim' }
         },
         { -- File tree
             "nvim-neo-tree/neo-tree.nvim",
@@ -39,18 +39,28 @@ require("lazy").setup({
             'nvim-lualine/lualine.nvim',
             dependencies = { 'nvim-tree/nvim-web-devicons' }
         },
-        {
+        { -- Start screen
             'goolord/alpha-nvim',
             dependencies = { 'nvim-tree/nvim-web-devicons' },
         },
+
+        { -- Session managment
+            { "rmagatti/auto-session" },
+       	    {
+	        "rmagatti/session-lens",
+                requires = {'rmagatti/auto-session', 'nvim-telescope/telescope.nvim'}
+            }
+	},
+
         -- Color scheme
-        {"rebelot/kanagawa.nvim"},
+        { "rebelot/kanagawa.nvim"},
+        { "rose-pine/neovim", name="rose-pine"},
 
         -- GC to comment
         { 'numToStr/Comment.nvim', opts = {} },
 
         -- Syntax highlighting
-        { "nvim-treesitter/nvim-treesitter" },
+        { "nvim-treesitter/nvim-treesitter", build=":TSUpdate"},
     }
 })
 
@@ -110,10 +120,8 @@ require ("lspconfig").clangd.setup {
 
 require("lspconfig")
 
--- Treesitter setup
-require("nvim-treesitter.configs").setup {
-    ensure_installed = { "c", "cpp", "rust", "python", "lua", "vim", "vimdoc", "query" },
-}
+-- -- Treesitter setup
+require("nvim-treesitter.configs").setup {}
 
 -- Lua line / status line setup
 require("lualine").setup {}
@@ -127,7 +135,10 @@ require("neo-tree").setup {
 }
 
 -- Alpha.nvim start up screen setup
-require'alpha'.setup(require'alpha.themes.dashboard'.config)
+require'alpha'.setup(require'alpha.themes.startify'.config)
+
+require("auto-session").setup {}
+require("telescope").load_extension("session-lens")
 
 -- Key binds
 vim.keymap.set('n', 'W', 'b', {})
@@ -148,6 +159,7 @@ vim.keymap.set('n', '<leader>fn', function() builtin.find_files { cwd = vim.fn.s
 vim.keymap.set('n', '<leader>/', function()
         builtin.current_buffer_fuzzy_find(require('telescope.themes').get_dropdown { winblend = 10, previewer = false, })
     end, {})
+vim.keymap.set('n', '<leader>fs', function() vim.cmd("SearchSession") end, {})
 
 -- Neotree keybinds
 vim.keymap.set('n', '<leader>nt', function() vim.cmd("Neotree float") end, {})
@@ -165,11 +177,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 -- Vim options
 
 -- Set color scheme
-vim.cmd.colorscheme("kanagawa-dragon")
+vim.cmd.colorscheme("rose-pine")
 
 -- Make everything transparent
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
 -- vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
 -- vim.api.nvim_set_hl(0, "NormaCursorLineNr", { bg = "none" })
 -- vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
@@ -199,3 +211,9 @@ vim.opt.fillchars = {eob = " "}
 
 -- Remove error bar / sign column
 vim.cmd("set signcolumn=no")
+
+-- Remove "--INSERT--"
+vim.cmd("set noshowmode")
+
+-- Keep cursor in the roughly middle of the screen
+vim.cmd("set scrolloff=10")
