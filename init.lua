@@ -1,13 +1,13 @@
--- Bootstrap lazy.nvimjjjkj
+-- Set leader
+vim.g.mapleader = " "
+
+-- Bootstrap lazy.nvim
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
 if not (vim.uv or vim.loop).fs_stat(lazypath) then
     local lazyrepo = "https://github.com/folke/lazy.nvim.git"
     vim.fn.system({ "git", "clone", "--filter=blob:none", "--branch=stable", lazyrepo, lazypath })
 end
 vim.opt.rtp:prepend(lazypath)
-
--- Set leader
-vim.g.mapleader = " "
 
 -- Setup lazy.nvim
 require("lazy").setup({
@@ -50,7 +50,7 @@ require("lazy").setup({
 	        "rmagatti/session-lens",
                 requires = {'rmagatti/auto-session', 'nvim-telescope/telescope.nvim'}
             }
-	},
+        },
 
         -- Color scheme
         { "rebelot/kanagawa.nvim"},
@@ -116,6 +116,7 @@ require ("lspconfig").lua_ls.setup {
 require ("lspconfig").clangd.setup {
     on_attach = on_attach,
     capabilities = capabilities,
+    file_types = { "cpp", "c", "cuda"}
 }
 
 require("lspconfig")
@@ -140,8 +141,11 @@ require'alpha'.setup(require'alpha.themes.startify'.config)
 require("auto-session").setup {}
 require("telescope").load_extension("session-lens")
 
--- Key binds
+-- Key maps
 vim.keymap.set('n', 'W', 'b', {})
+
+-- <C-z> to save all
+vim.keymap.set('n', '<C-z>', ':wa<CR><C-z>', {})
 
 -- Navigate windows
 vim.keymap.set('n', '<C-h>', '<C-w><C-h>', {})
@@ -180,11 +184,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 vim.cmd.colorscheme("rose-pine")
 
 -- Make everything transparent
--- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
--- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
--- vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
--- vim.api.nvim_set_hl(0, "NormaCursorLineNr", { bg = "none" })
--- vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+vim.api.nvim_set_hl(0, "NormaCursorLineNr", { bg = "none" })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
 
 -- Add line numbers
 vim.cmd("set number")
