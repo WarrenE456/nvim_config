@@ -76,3 +76,17 @@ lspconfig.cssls.setup {
     capabilities=capabilities,
     file_types = { "css" }
 }
+
+-- Toggle function
+local lsp_active = true;
+function LSP_toggle()
+    if lsp_active == true then
+        vim.cmd(":w")
+        vim.lsp.stop_client(vim.lsp.get_active_clients())
+        lsp_active = false
+    else
+        vim.cmd(":w")
+        vim.cmd(":e")
+        lsp_active = true
+    end
+end
