@@ -18,12 +18,12 @@ vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
 vim.cmd("set number")
 vim.cmd("set rnu")
 
--- Remove status line
--- vim.cmd("let s:hidden_all = 1")
--- vim.cmd("set noshowmode")
--- vim.cmd("set noruler")
--- vim.cmd("set laststatus=0")
--- vim.cmd("set noshowcmd")
+-- Remove noise
+vim.cmd("let s:hidden_all = 1")
+vim.cmd("set noshowmode")
+vim.cmd("set noshowcmd")
+vim.cmd("set noruler")
+vim.cmd("set laststatus=0")
 
 -- Make status line full width
 vim.cmd("set laststatus=3")
