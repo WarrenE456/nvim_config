@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "clangd" }
+    ensure_installed = { "lua_ls", "clangd", "html", "cssls" }
 }
 
 local on_attach = function(_, _)
@@ -50,5 +50,29 @@ lspconfig.lua_ls.setup {
 lspconfig.clangd.setup {
     on_attach = on_attach,
     capabilities = capabilities,
-    file_types = { "cpp", "c", "cuda"}
+    clangd_config = { init_options = { compilationDatabasePath = './out' } },
+    file_types = {"c", "cpp", "cuda"}
+}
+
+-- To install language server, "npm i -g vscode-langservers-extracted"
+lspconfig.html.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    cmd = { "vscode-html-language-server", "--stdio" },
+    file_types = { "html", "templ" },
+    init_options = {
+        configurationSection = { "html", "css", "javascript" },
+        embeddedLanguages = {
+            css = true,
+            javascript = true
+        },
+        provideFormatter = true
+    }
+
+}
+
+lspconfig.cssls.setup {
+    on_attach=on_attach,
+    capabilities=capabilities,
+    file_types = { "css" }
 }
