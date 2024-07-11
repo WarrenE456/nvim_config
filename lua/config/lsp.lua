@@ -47,12 +47,14 @@ lspconfig.lua_ls.setup {
     }
 }
 
-lspconfig.clangd.setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    clangd_config = { init_options = { compilationDatabasePath = './out' } },
-    file_types = {"c", "cpp", "cuda"}
-}
+-- lspconfig.clangd.setup {
+--     on_attach = on_attach,
+--     capabilities = capabilities,
+--     clangd_config = { init_options = { compilationDatabasePath = 'build/' } },
+--     file_types = {"c", "cpp", "cuda"}
+-- }
+
+lspconfig.clangd.setup(require("config.clangd"))
 
 -- To install language server, "npm i -g vscode-langservers-extracted"
 lspconfig.html.setup {
