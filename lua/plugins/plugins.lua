@@ -70,5 +70,8 @@ return {
         opts = {
             lang = "cpp",
         },
-    }
+    },
+
+    -- HTML tag auto-closing
+    { 'windwp/nvim-ts-autotag' },
 }

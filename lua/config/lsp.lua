@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "clangd", "html", "cssls" }
+    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright"}
 }
 
 local on_attach = function(_, _)
@@ -47,14 +47,12 @@ lspconfig.lua_ls.setup {
     }
 }
 
--- lspconfig.clangd.setup {
---     on_attach = on_attach,
---     capabilities = capabilities,
---     clangd_config = { init_options = { compilationDatabasePath = 'build/' } },
---     file_types = {"c", "cpp", "cuda"}
--- }
-
-lspconfig.clangd.setup(require("config.clangd"))
+lspconfig.clangd.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    clangd_config = { init_options = { compilationDatabasePath = 'build/' } },
+    file_types = {"c", "cpp", "cuda"},
+}
 
 -- To install language server, "npm i -g vscode-langservers-extracted"
 lspconfig.html.setup {
@@ -77,6 +75,12 @@ lspconfig.cssls.setup {
     on_attach=on_attach,
     capabilities=capabilities,
     file_types = { "css" }
+}
+
+
+lspconfig.pyright.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
 }
 
 -- Toggle function

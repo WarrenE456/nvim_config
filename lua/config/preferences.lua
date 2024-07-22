@@ -37,6 +37,9 @@ vim.cmd("set expandtab")
 -- Remove tildas
 vim.opt.fillchars = {eob = " "}
 
+-- Replace all instances on line instead of just one
+vim.cmd("set gdefault")
+
 -- Remove error bar / sign column
 vim.cmd("set signcolumn=no")
 
