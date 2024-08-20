@@ -1,8 +1,8 @@
 -- local color = "#dbc7c3"
-require("noirbuddy").setup {
-    preset = "slate",
-    -- colors = {
-    --     primary = color,
-    --     secondary = color,
-    -- },
-}
+-- require("noirbuddy").setup {
+--     preset = "slate",
+--     -- colors = {
+--     --     primary = color,
+--     --     secondary = color,
+--     -- },
+-- }

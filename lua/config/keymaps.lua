@@ -23,4 +23,7 @@ vim.keymap.set('n', '<leader>/', function()
 vim.keymap.set('n', '<leader>fs', function() vim.cmd("SearchSession") end, {})
 
 -- Neotree keybinds
-vim.keymap.set('n', '<leader>nt', function() vim.cmd("Neotree float") end, {})
+vim.keymap.set('n', '<leader>nt', function() vim.cmd("Neotree") end, {})
+
+-- Diagnostic float
+vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, {})

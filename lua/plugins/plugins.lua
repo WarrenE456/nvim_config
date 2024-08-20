@@ -74,4 +74,7 @@ return {
 
     -- HTML tag auto-closing
     { 'windwp/nvim-ts-autotag' },
+
+    -- Window centering
+    {"shortcuts/no-neck-pain.nvim", version = "*"}
 }

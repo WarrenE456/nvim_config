@@ -8,11 +8,11 @@ vim.api.nvim_create_autocmd('TextYankPost', {
 })
 
 -- Make everything transparent
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
-vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
-vim.api.nvim_set_hl(0, "NormaCursorLineNr", { bg = "none" })
-vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormalFloat", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "LineNr", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "NormaCursorLineNr", { bg = "none" })
+-- vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
 
 -- Add line numbers
 vim.cmd("set number")
@@ -48,3 +48,6 @@ vim.cmd("set noshowmode")
 
 -- Keep cursor in the roughly middle of the screen
 vim.cmd("set scrolloff=10")
+
+-- Colorscheme
+vim.cmd("colorscheme kanagawa-dragon")

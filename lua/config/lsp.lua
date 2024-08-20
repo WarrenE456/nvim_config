@@ -1,9 +1,9 @@
 require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright"}
+    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "tsserver", "rust_analyzer"}
 }
 
-local on_attach = function(_, _)
+local on_attach = function(client, bufnr)
     vim.keymap.set('n', "<leader>rn", vim.lsp.buf.rename, {});
     vim.keymap.set('n', "<leader>ca", vim.lsp.buf.code_action, {});
     vim.keymap.set('n', "gd", vim.lsp.buf.definition, {});
@@ -83,6 +83,44 @@ lspconfig.pyright.setup {
     capabilities = capabilities,
 }
 
+lspconfig.tsserver.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    filetypes = {
+      'javascript',
+      'javascriptreact',
+      'javascript.jsx',
+      'typescript',
+      'typescriptreact',
+      'typescript.tsx',
+    },
+
+}
+
+lspconfig.rust_analyzer.setup({
+    on_attach = function(client, bufnr)
+        on_attach(client, bufnr)
+        vim.lsp.inlay_hint.enable(true, {bufnr = bufnr})
+    end,
+    settings = {
+        ["rust-analyzer"] = {
+            imports = {
+                granularity = {
+                    group = "module",
+                },
+                prefix = "self",
+            },
+            cargo = {
+                buildScripts = {
+                    enable = true,
+                },
+            },
+            procMacro = {
+                enable = true
+            },
+        }
+    }
+})
 -- Toggle function
 local lsp_active = true;
 function LSP_toggle()
