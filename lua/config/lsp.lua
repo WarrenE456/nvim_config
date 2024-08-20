@@ -3,7 +3,15 @@ require("mason-lspconfig").setup {
     ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "tsserver", "rust_analyzer"}
 }
 
+local navic = require("nvim-navic")
+local navbuddy = require("nvim-navbuddy")
+
 local on_attach = function(client, bufnr)
+    if client.server_capabilities.documentSymbolProvider then
+        navic.attach(client, bufnr)
+        vim.o.winbar = "%{%v:lua.require'nvim-navic'.get_location()%}"
+        navbuddy.attach(client, bufnr)
+    end
     vim.keymap.set('n', "<leader>rn", vim.lsp.buf.rename, {});
     vim.keymap.set('n', "<leader>ca", vim.lsp.buf.code_action, {});
     vim.keymap.set('n', "gd", vim.lsp.buf.definition, {});

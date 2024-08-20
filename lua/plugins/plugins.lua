@@ -76,5 +76,12 @@ return {
     { 'windwp/nvim-ts-autotag' },
 
     -- Window centering
-    {"shortcuts/no-neck-pain.nvim", version = "*"}
+    {"shortcuts/no-neck-pain.nvim", version = "*"},
+
+    -- Breadcrumbs
+    {
+        {"SmiteshP/nvim-navic"},
+        {"SmiteshP/nvim-navbuddy"},
+        {"MunifTanjim/nui.nvim"},
+    }
 }

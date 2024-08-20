@@ -27,3 +27,6 @@ vim.keymap.set('n', '<leader>nt', function() vim.cmd("Neotree") end, {})
 
 -- Diagnostic float
 vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, {})
+
+-- Navbuddy
+vim.keymap.set('n', '<leader>nb', function() vim.cmd("Navbuddy") end, {})
