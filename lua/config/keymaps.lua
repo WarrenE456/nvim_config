@@ -30,3 +30,8 @@ vim.keymap.set('n', '<leader>e', vim.diagnostic.open_float, {})
 
 -- Navbuddy
 vim.keymap.set('n', '<leader>nb', function() vim.cmd("Navbuddy") end, {})
+
+
+-- Forward/back diagnostic
+vim.keymap.set('n', '<leader>g]', function() vim.diagnostic.goto_next() end, {})
+vim.keymap.set('n', '<leader>g[', function() vim.diagnostic.goto_prev() end, {})

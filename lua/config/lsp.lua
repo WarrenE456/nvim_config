@@ -62,6 +62,30 @@ lspconfig.clangd.setup {
     file_types = {"c", "cpp", "cuda"},
 }
 
+-- Ocaml setup begin
+-- local util = require 'lspconfig.util'
+--
+-- lspconfig.ocamlls.setup {
+--     on_attach = on_attach,
+--     capabilities = capabilities,
+--   default_config = {
+--     cmd = { 'ocaml-language-server', '--stdio' },
+--     filetypes = { 'ocaml', 'reason' },
+--     root_dir = util.root_pattern('*.opam', 'esy.json', 'package.json'),
+--   },
+--   docs = {
+--     description = [[
+-- https://github.com/ocaml-lsp/ocaml-language-server
+--
+-- `ocaml-language-server` can be installed via `npm`
+-- ```sh
+-- npm install -g ocaml-language-server
+-- ```
+--     ]],
+--   },
+-- }
+-- Ocaml setup end
+
 -- To install language server, "npm i -g vscode-langservers-extracted"
 lspconfig.html.setup {
     on_attach = on_attach,
@@ -129,6 +153,22 @@ lspconfig.rust_analyzer.setup({
         }
     }
 })
+
+-- Zig start
+
+-- don't show parse errors in a separate window
+vim.g.zig_fmt_parse_errors = 0
+-- disable format-on-save from `ziglang/zig.vim`
+vim.g.zig_fmt_autosave = 0
+
+lspconfig.zls.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    cmd = { 'zls' },
+}
+
+-- Zig end
+
 -- Toggle function
 local lsp_active = true;
 function LSP_toggle()
