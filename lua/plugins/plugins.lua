@@ -86,4 +86,13 @@ return {
     },
     -- Zig
     { "ziglang/zig.vim" },
+    -- Undo Tree
+    { "mbbill/undotree" },
+    {
+        "lukas-reineke/indent-blankline.nvim",
+        main = "ibl",
+        ---@module "ibl"
+        ---@type ibl.config
+        opts = {},
+}
 }

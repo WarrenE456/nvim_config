@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "tsserver", "rust_analyzer"}
+    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "tsserver", "rust_analyzer", "gopls"}
 }
 
 local navic = require("nvim-navic")
@@ -154,7 +154,22 @@ lspconfig.rust_analyzer.setup({
     }
 })
 
+lspconfig.gopls.setup {
+    on_attach = on_attach,
+    capabilities = capabilities,
+    settings = {
+    gopls = {
+      analyses = {
+        unusedparams = true,
+      },
+      staticcheck = true,
+      gofumpt = true,
+    },
+  },
+}
+
 -- Zig start
+-- NOTE: Must install ZLS yourself
 
 -- don't show parse errors in a separate window
 vim.g.zig_fmt_parse_errors = 0
