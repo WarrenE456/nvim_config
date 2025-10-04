@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "tsserver", "rust_analyzer", "gopls"}
+    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "rust_analyzer", "gopls"}
 }
 
 local navic = require("nvim-navic")
@@ -41,9 +41,7 @@ cmp.setup {
 
 local capabilities = require("cmp_nvim_lsp").default_capabilities()
 
-local lspconfig = require("lspconfig")
-
-lspconfig.lua_ls.setup {
+vim.lsp.config("lua_ls", {
     on_attach = on_attach,
     capabilities = capabilities,
     settings = {
@@ -53,14 +51,14 @@ lspconfig.lua_ls.setup {
             },
         }
     }
-}
+})
 
-lspconfig.clangd.setup {
+vim.lsp.config("clangd", {
     on_attach = on_attach,
     capabilities = capabilities,
     clangd_config = { init_options = { compilationDatabasePath = 'build/' } },
     file_types = {"c", "cpp", "cuda"},
-}
+})
 
 -- Ocaml setup begin
 -- local util = require 'lspconfig.util'
@@ -87,7 +85,7 @@ lspconfig.clangd.setup {
 -- Ocaml setup end
 
 -- To install language server, "npm i -g vscode-langservers-extracted"
-lspconfig.html.setup {
+vim.lsp.config("html", {
     on_attach = on_attach,
     capabilities = capabilities,
     cmd = { "vscode-html-language-server", "--stdio" },
@@ -100,36 +98,21 @@ lspconfig.html.setup {
         },
         provideFormatter = true
     }
+})
 
-}
-
-lspconfig.cssls.setup {
+vim.lsp.config("cssls", {
     on_attach=on_attach,
     capabilities=capabilities,
     file_types = { "css" }
-}
+})
 
 
-lspconfig.pyright.setup {
+vim.lsp.config("pyright", {
     on_attach = on_attach,
     capabilities = capabilities,
-}
+})
 
-lspconfig.tsserver.setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    filetypes = {
-      'javascript',
-      'javascriptreact',
-      'javascript.jsx',
-      'typescript',
-      'typescriptreact',
-      'typescript.tsx',
-    },
-
-}
-
-lspconfig.rust_analyzer.setup({
+vim.lsp.config("rust_analyzer", {
     on_attach = function(client, bufnr)
         on_attach(client, bufnr)
         vim.lsp.inlay_hint.enable(true, {bufnr = bufnr})
@@ -154,7 +137,7 @@ lspconfig.rust_analyzer.setup({
     }
 })
 
-lspconfig.gopls.setup {
+vim.lsp.config("gopls", {
     on_attach = on_attach,
     capabilities = capabilities,
     settings = {
@@ -166,34 +149,31 @@ lspconfig.gopls.setup {
       gofumpt = true,
     },
   },
-}
+})
 
 -- Zig start
 -- NOTE: Must install ZLS yourself
 
 -- don't show parse errors in a separate window
-vim.g.zig_fmt_parse_errors = 0
+-- vim.g.zig_fmt_parse_errors = 0
 -- disable format-on-save from `ziglang/zig.vim`
-vim.g.zig_fmt_autosave = 0
+-- vim.g.zig_fmt_autosave = 0
 
-lspconfig.zls.setup {
-    on_attach = on_attach,
-    capabilities = capabilities,
-    cmd = { 'zls' },
-}
+-- lspconfig.zls.setup {
+--     on_attach = on_attach,
+--     capabilities = capabilities,
+--     cmd = { 'zls' },
+-- }
 
 -- Zig end
+--
+vim.lsp.enable {
+    "rust_analyzer",
+    "clangd",
+    "luals",
+    "pyright",
+    "gopls",
+    "cssls",
+    "html"
+}
 
--- Toggle function
-local lsp_active = true;
-function LSP_toggle()
-    if lsp_active == true then
-        vim.cmd(":w")
-        vim.lsp.stop_client(vim.lsp.get_active_clients())
-        lsp_active = false
-    else
-        vim.cmd(":w")
-        vim.cmd(":e")
-        lsp_active = true
-    end
-end
