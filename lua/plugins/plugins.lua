@@ -94,5 +94,7 @@ return {
         ---@module "ibl"
         ---@type ibl.config
         opts = {},
-}
+    },
+    -- Transparency
+    { "xiyaowong/transparent.nvim" },
 }
