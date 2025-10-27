@@ -53,6 +53,16 @@ return {
     -- Color schemes
     { "rebelot/kanagawa.nvim"},
     { "rose-pine/neovim", name="rose-pine"},
+    { "catppuccin/nvim", name = "catppuccin", priority = 1000 },
+    {
+        'AlexvZyl/nordic.nvim',
+        lazy = false,
+        priority = 1000,
+        config = function()
+            require('nordic').load()
+        end
+    },
+
 
     -- GC to comment
     { "numToStr/Comment.nvim", opts = {} },
@@ -97,4 +107,5 @@ return {
     },
     -- Transparency
     { "xiyaowong/transparent.nvim" },
+
 }

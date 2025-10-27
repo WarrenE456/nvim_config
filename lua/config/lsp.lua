@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "rust_analyzer", "gopls"}
+    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "rust_analyzer", "gopls", "gdscript" }
 }
 
 local navic = require("nvim-navic")
@@ -151,6 +151,11 @@ vim.lsp.config("gopls", {
   },
 })
 
+vim.lsp.config("gdscript", {
+    on_attach = on_attach,
+    capabilities = capabilities,
+})
+
 -- Zig start
 -- NOTE: Must install ZLS yourself
 
@@ -174,6 +179,6 @@ vim.lsp.enable {
     "pyright",
     "gopls",
     "cssls",
-    "html"
+    "html",
+    "gdscript"
 }
-
