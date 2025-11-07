@@ -1,6 +1,6 @@
 require("mason").setup()
 require("mason-lspconfig").setup {
-    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "rust_analyzer", "gopls", "gdscript" }
+    ensure_installed = { "lua_ls", "clangd", "html", "cssls", "pyright", "rust_analyzer", "gopls" }
 }
 
 local navic = require("nvim-navic")
