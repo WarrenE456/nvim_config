@@ -3,7 +3,7 @@ require("nvim-treesitter.configs").setup {
         "c", "cpp", "lua", "vim", "vimdoc",
         "rust", "python", "javascript", "html", "css", "json", "gdscript"
     },
-    auto_install = true,
+    auto_install = false,
     sync_install = false,
     highlight = { enable = true },
     indent = { enable = true },

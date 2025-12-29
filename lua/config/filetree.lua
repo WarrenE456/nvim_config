@@ -1,7 +1,5 @@
-require("neo-tree").setup {
-    close_if_last_window = true,
-    window = {
-        position="float",
-        width=25,
-    },
-}
+require("neo-tree").setup({
+  window = {
+    position = "float",   -- use a floating window
+  },
+})
