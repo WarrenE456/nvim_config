@@ -1,6 +1,3 @@
--- Capital W to go back a word
-vim.keymap.set('n', 'W', 'b', {})
-
 -- <C-z> to save all
 vim.keymap.set('n', '<C-z>', ':wa<CR><C-z>', {})
 
